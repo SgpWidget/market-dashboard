@@ -71,9 +71,7 @@
     const bid = data.bids[0].p;
     const ask = data.asks[0].p;
     const mid = ((bid + ask) / 2).toFixed(2);
-    return "$" + mid;
-  }
-);;
+    return "$" + mid;});
     fetchRate("wti", "https://api.metals.live/v1/spot/wti", data => "$" + data[0]);
     fetchRate("brent", "https://api.metals.live/v1/spot/brent", data => "$" + data[0]);
     fetchRate("btc", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", data => "$" + data.bitcoin.usd);
