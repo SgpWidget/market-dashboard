@@ -1,77 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Dashboard Widget</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Market Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
-      margin: 0;
-      padding: 10px;
+      padding: 20px;
     }
-    .widget {
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .dashboard {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
     }
     .card {
-      background: white;
+      background: #fff;
+      border-radius: 12px;
       padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     .title {
       font-weight: bold;
-      font-size: 1em;
       margin-bottom: 5px;
+      font-size: 0.9rem;
     }
     .value {
-      font-size: 1.2em;
+      font-size: 1.3rem;
       color: #2a9d8f;
     }
   </style>
 </head>
 <body>
   <h2>Live Market Dashboard</h2>
-  <div class="widget">
-    <div class="card">
-      <div class="title">SOFR (Static)</div>
-      <div class="value" id="sofr">5.34%</div>
-    </div>
-    <div class="card">
-      <div class="title">Euribor 3M (Static)</div>
-      <div class="value" id="euribor">3.75%</div>
-    </div>
-    <div class="card">
-      <div class="title">LPR (1Y - Static)</div>
-      <div class="value" id="lpr">3.45%</div>
-    </div>
-    <div class="card">
-      <div class="title">Gold (USD)</div>
-      <div class="value" id="gold">Loading...</div>
-    </div>
-    <div class="card">
-      <div class="title">WTI Crude</div>
-      <div class="value" id="wti">Loading...</div>
-    </div>
-    <div class="card">
-      <div class="title">Brent Crude</div>
-      <div class="value" id="brent">Loading...</div>
-    </div>
-    <div class="card">
-      <div class="title">S&P 500</div>
-      <div class="value" id="sp500">Loading...</div>
-    </div>
-    <div class="card">
-      <div class="title">FTSE 100</div>
-      <div class="value" id="ftse">Loading...</div>
-    </div>
-    <div class="card">
-      <div class="title">Bitcoin (BTC)</div>
-      <div class="value" id="btc">Loading...</div>
-    </div>
+  <div class="dashboard">
+    <div class="card"><div class="title">SOFR</div><div class="value" id="sofr">Loading...</div></div>
+    <div class="card"><div class="title">Euribor 3M</div><div class="value" id="euribor">Loading...</div></div>
+    <div class="card"><div class="title">LPR (1Y)</div><div class="value" id="lpr">Loading...</div></div>
+    <div class="card"><div class="title">Gold (USD)</div><div class="value" id="gold">Loading...</div></div>
+    <div class="card"><div class="title">WTI Crude</div><div class="value" id="wti">Loading...</div></div>
+    <div class="card"><div class="title">Brent Crude</div><div class="value" id="brent">Loading...</div></div>
+    <div class="card"><div class="title">S&P 500</div><div class="value" id="sp500">Loading...</div></div>
+    <div class="card"><div class="title">FTSE 100</div><div class="value" id="ftse">Loading...</div></div>
+    <div class="card"><div class="title">Bitcoin (BTC)</div><div class="value" id="btc">Loading...</div></div>
   </div>
 
   <script>
@@ -80,19 +56,32 @@
         const res = await fetch(url);
         const data = await res.json();
         document.getElementById(id).textContent = transform(data);
-      } catch (e) {
+      } catch (err) {
         document.getElementById(id).textContent = "N/A";
       }
     }
 
-    fetchRate("gold", "https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD",
-  data => {
-    const mid = ((data.bids[0].p + data.asks[0].p) / 2).toFixed(2); return "$" + mid});
-    fetchRate("wti", "https://api.metals.live/v1/spot/wti", data => "$" + data[0]);
-    fetchRate("brent", "https://api.metals.live/v1/spot/brent", data => "$" + data[0]);
-    fetchRate("btc", "btc", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", data => "$" + data.bitcoin.usd);
-    fetchRate("sp500", "https://api.metals.live/v1/spot/sp500", data => data[0] ? data[0] : "N/A");
-    fetchRate("ftse", "https://api.metals.live/v1/spot/ftse", data => data[0] ? data[0] : "N/A");
+    // Publicly available, no-auth endpoints:
+    fetchRate("gold", "https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD", data => {
+      const bid = data.bids[0].p;
+      const ask = data.asks[0].p;
+      const mid = ((bid + ask) / 2).toFixed(2);
+      return "$" + mid;
+    });
+
+    fetchRate("btc", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", data => "$" + data.bitcoin.usd);
+
+    // Placeholder values (no CORS-safe or public APIs)
+    document.getElementById("sofr").textContent = "5.34%";
+    document.getElementById("euribor").textContent = "3.75%";
+    document.getElementById("lpr").textContent = "3.45%";
+
+    // WTI and Brent fallback from CoinGecko
+    fetchRate("wti", "https://api.coingecko.com/api/v3/simple/price?ids=wti-crude-oil&vs_currencies=usd", data => "$" + (data['wti-crude-oil']?.usd ?? "N/A"));
+    fetchRate("brent", "https://api.coingecko.com/api/v3/simple/price?ids=brent-oil&vs_currencies=usd", data => "$" + (data['brent-oil']?.usd ?? "N/A"));
+
+    fetchRate("sp500", "https://api.coingecko.com/api/v3/simple/price?ids=s-p-500&vs_currencies=usd", data => "$" + (data['s-p-500']?.usd ?? "N/A"));
+    fetchRate("ftse", "https://api.coingecko.com/api/v3/simple/price?ids=ftse-100&vs_currencies=usd", data => "$" + (data['ftse-100']?.usd ?? "N/A"));
   </script>
 </body>
 </html>
