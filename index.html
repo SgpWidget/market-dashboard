@@ -88,7 +88,7 @@
     fetchRate("gold", "https://api.metals.live/v1/spot/gold", data => "$" + data[0]);
     fetchRate("wti", "https://api.metals.live/v1/spot/wti", data => "$" + data[0]);
     fetchRate("brent", "https://api.metals.live/v1/spot/brent", data => "$" + data[0]);
-    fetchRate("btc", "https://api.coindesk.com/v1/bpi/currentprice/BTC.json", data => "$" + data.bpi.USD.rate);
+    fetchRate("btc", "btc", "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", data => "$" + data.bitcoin.usd);
     fetchRate("sp500", "https://api.metals.live/v1/spot/sp500", data => data[0] ? data[0] : "N/A");
     fetchRate("ftse", "https://api.metals.live/v1/spot/ftse", data => data[0] ? data[0] : "N/A");
   </script>
