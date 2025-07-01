@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Dashboard Widget</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 10px;
+    }
+    .widget {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .title {
+      font-weight: bold;
+      font-size: 1em;
+      margin-bottom: 5px;
+    }
+    .value {
+      font-size: 1.2em;
+      color: #2a9d8f;
+    }
+  </style>
+</head>
+<body>
+  <h2>Live Market Dashboard</h2>
+  <div class="widget">
+    <div class="card">
+      <div class="title">SOFR (Static)</div>
+      <div class="value" id="sofr">5.34%</div>
+    </div>
+    <div class="card">
+      <div class="title">Euribor 3M (Static)</div>
+      <div class="value" id="euribor">3.75%</div>
+    </div>
+    <div class="card">
+      <div class="title">LPR (1Y - Static)</div>
+      <div class="value" id="lpr">3.45%</div>
+    </div>
+    <div class="card">
+      <div class="title">Gold (USD)</div>
+      <div class="value" id="gold">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="title">WTI Crude</div>
+      <div class="value" id="wti">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="title">Brent Crude</div>
+      <div class="value" id="brent">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="title">S&P 500</div>
+      <div class="value" id="sp500">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="title">FTSE 100</div>
+      <div class="value" id="ftse">Loading...</div>
+    </div>
+    <div class="card">
+      <div class="title">Bitcoin (BTC)</div>
+      <div class="value" id="btc">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchRate(id, url, transform) {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById(id).textContent = transform(data);
+      } catch (e) {
+        document.getElementById(id).textContent = "N/A";
+      }
+    }
+
+    fetchRate("gold", "https://api.metals.live/v1/spot/gold", data => "$" + data[0]);
+    fetchRate("wti", "https://api.metals.live/v1/spot/wti", data => "$" + data[0]);
+    fetchRate("brent", "https://api.metals.live/v1/spot/brent", data => "$" + data[0]);
+    fetchRate("btc", "https://api.coindesk.com/v1/bpi/currentprice/BTC.json", data => "$" + data.bpi.USD.rate);
+    fetchRate("sp500", "https://api.metals.live/v1/spot/sp500", data => data[0] ? data[0] : "N/A");
+    fetchRate("ftse", "https://api.metals.live/v1/spot/ftse", data => data[0] ? data[0] : "N/A");
+  </script>
+</body>
+</html>
